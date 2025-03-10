@@ -1,5 +1,9 @@
 package com.github.iptton.opendevins.toolWindow
 
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
@@ -11,6 +15,9 @@ import com.intellij.ui.content.ContentFactory
 import com.github.iptton.opendevins.MyBundle
 import com.github.iptton.opendevins.services.MyProjectService
 import javax.swing.JButton
+import org.jetbrains.jewel.bridge.JewelComposePanel
+import org.jetbrains.jewel.ui.component.Link
+import org.jetbrains.jewel.ui.component.Text
 
 
 class MyToolWindowFactory : ToolWindowFactory {
@@ -31,7 +38,7 @@ class MyToolWindowFactory : ToolWindowFactory {
 
         private val service = toolWindow.project.service<MyProjectService>()
 
-        fun getContent() = JBPanel<JBPanel<*>>().apply {
+        fun getContentOri() = JBPanel<JBPanel<*>>().apply {
             val label = JBLabel(MyBundle.message("randomLabel", "?"))
 
             add(label)
@@ -40,6 +47,27 @@ class MyToolWindowFactory : ToolWindowFactory {
                     label.text = MyBundle.message("randomLabel", service.getRandomNumber())
                 }
             })
+        }
+
+        fun getContent() = JewelComposePanel {
+            Column {
+                Column(
+                    Modifier.fillMaxSize().padding(20.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text("No supported modules were found.")
+                        Row {
+                            Text("Try ")
+                            Link(
+                                enabled = true,
+                                text = "refreshing",
+                                onClick = {  },
+                            )
+                            Text(" external projects")
+                        }
+                }
+            }
         }
     }
 }

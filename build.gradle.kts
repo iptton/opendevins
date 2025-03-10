@@ -9,6 +9,12 @@ plugins {
     alias(libs.plugins.changelog) // Gradle Changelog Plugin
     alias(libs.plugins.qodana) // Gradle Qodana Plugin
     alias(libs.plugins.kover) // Gradle Kover Plugin
+
+    alias(libs.plugins.kotlin.plugin.compose)
+    alias(libs.plugins.compose.desktop)
+    alias(libs.plugins.kotlinter)
+
+    `maven-publish`
 }
 
 group = providers.gradleProperty("pluginGroup").get()
@@ -21,12 +27,16 @@ kotlin {
 
 // Configure project's dependencies
 repositories {
-    mavenCentral()
 
     // IntelliJ Platform Gradle Plugin Repositories Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-repositories-extension.html
     intellijPlatform {
         defaultRepositories()
     }
+
+    mavenCentral()
+    google()
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven("https://packages.jetbrains.team/maven/p/kpm/public")
 }
 
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
@@ -48,6 +58,20 @@ dependencies {
         zipSigner()
         testFramework(TestFrameworkType.Platform)
     }
+
+    implementation(compose.desktop.currentOs) {
+        exclude(group = "org.jetbrains.compose.material")
+        exclude(group = "org.jetbrains.kotlinx")
+    }
+
+    val targetIdeVersion = providers.gradleProperty("targetIdeVersion").getOrElse("241")
+    val jewelBridge = when (targetIdeVersion) {
+        "241" -> libs.jewel.bridge.ij241
+        "243" -> libs.jewel.bridge.ij243
+        "251" -> libs.jewel.bridge.ij251
+        else -> libs.jewel.bridge.ij241 // Default
+    }
+    implementation(jewelBridge)
 }
 
 // Configure IntelliJ Platform Gradle Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-extension.html
