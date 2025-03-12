@@ -8,7 +8,7 @@ intelliJPlatform = "2.1.0"
 kotlin = "2.0.21"
 kover = "0.8.3"
 qodana = "2024.2.3"
-composeDesktop = "1.7.0"
+composeDesktop = "1.8.0+dev2186"
 kotlinterGradlePlugin = "3.12.0"
 jewel = "0.26.0"
 
